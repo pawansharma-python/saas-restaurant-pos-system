@@ -92,43 +92,43 @@ This project follows a SaaS (Software as a Service) architecture where multiple 
 
 ---
 
-# 📸 Project Screenshots
+# 📸 Project saas_pos/screenshots
 
 ## Login Page
 
-![Login](screenshots/Login%20Page.png)
+![Login](saas_pos/screenshots/Login%20Page.png)
 
 ---
 
 ## Super Admin Dashboard
 
-![Super Admin](screenshots/Super%20Admin%20Page%20(Developer).png)
+![Super Admin](saas_pos/screenshots/Super%20Admin%20Page%20(Developer).png)
 
 ### Registered Restaurants
 
-![Restaurants](screenshots/Super%20Admin%20Page%20Reg.%20Restaurant.png)
+![Restaurants](saas_pos/screenshots/Super%20Admin%20Page%20Reg.%20Restaurant.png)
 
 ### Security Vault
 
-![Security](screenshots/Super%20Admin%20Show%20Security%20Valut.png)
+![Security](saas_pos/screenshots/Super%20Admin%20Show%20Security%20Valut.png)
 
 ### Security Vault & Staff
 
-![Security Staff](screenshots/Super%20Admin%20Show%20Security%20Valut%20and%20%20staff.png)
+![Security Staff](saas_pos/screenshots/Super%20Admin%20Show%20Security%20Valut%20and%20%20staff.png)
 
 ---
 
 ## Restaurant Owner Dashboard
 
-![Owner](screenshots/Restaurant%20Owner%20Page.png)
+![Owner](saas_pos/screenshots/Restaurant%20Owner%20Page.png)
 
 ### Restaurant Settings
 
-![Settings](screenshots/Restaurant%20Owner%20Page%20Setting.png)
+![Settings](saas_pos/screenshots/Restaurant%20Owner%20Page%20Setting.png)
 
 ### Restaurant Operations
 
-![Operations](screenshots/Restaurant%20Owner%20%20Order%20and%20etc.png)
+![Operations](saas_pos/screenshots/Restaurant%20Owner%20%20Order%20and%20etc.png)
 
 ---
 
@@ -136,23 +136,23 @@ This project follows a SaaS (Software as a Service) architecture where multiple 
 
 ### Menu Items
 
-![Items](screenshots/Item%20Page.png)
+![Items](saas_pos/screenshots/Item%20Page.png)
 
 ### Menu Items Page 2
 
-![Items2](screenshots/Item%20Page%202.png)
+![Items2](saas_pos/screenshots/Item%20Page%202.png)
 
 ### Menu Items Page 3
 
-![Items3](screenshots/Itme%20Page%201.png)
+![Items3](saas_pos/screenshots/Itme%20Page%201.png)
 
 ### Add New Menu Item
 
-![Add Item](screenshots/Add%20New%20Menu%20Items.png)
+![Add Item](saas_pos/screenshots/Add%20New%20Menu%20Items.png)
 
 ### Item Add-ons
 
-![Addons](screenshots/Item%20Addons.png)
+![Addons](saas_pos/screenshots/Item%20Addons.png)
 
 ---
 
@@ -160,53 +160,53 @@ This project follows a SaaS (Software as a Service) architecture where multiple 
 
 ### Staff Dashboard
 
-![Staff](screenshots/Staff.png)
+![Staff](saas_pos/screenshots/Staff.png)
 
 ### Staff Data
 
-![Staff Data](screenshots/Staff%20DATA.png)
+![Staff Data](saas_pos/screenshots/Staff%20DATA.png)
 
 ### Staff Management Page
 
-![Staff Page](screenshots/Staff%20Page.png)
+![Staff Page](saas_pos/screenshots/Staff%20Page.png)
 
 ---
 
 ## Kitchen Dashboard
 
-![Kitchen](screenshots/Kitchen%20Dashboard.png)
+![Kitchen](saas_pos/screenshots/Kitchen%20Dashboard.png)
 
 ---
 
 ## Waiter Dashboard
 
-![Waiter](screenshots/Waiter%20Dashboard.png)
+![Waiter](saas_pos/screenshots/Waiter%20Dashboard.png)
 
 ---
 
 ## QR Ordering
 
-![QR](screenshots/OR%20Code%20For%20Scann%20and%20Order.png)
+![QR](saas_pos/screenshots/OR%20Code%20For%20Scann%20and%20Order.png)
 
 ---
 
 ## Online Payments
 
-![Payment](screenshots/Online%20Payment.png)
+![Payment](saas_pos/screenshots/Online%20Payment.png)
 
 ### Payment Dashboard
 
-![Payment Dashboard](screenshots/Payment.png)
+![Payment Dashboard](saas_pos/screenshots/Payment.png)
 
 ### Payment History
 
-![History](screenshots/Payment%20HIstory%20Rest..png)
+![History](saas_pos/screenshots/Payment%20HIstory%20Rest..png)
 
 ---
 
 ## Receipt Generation
 
-![Receipt](screenshots/Recript.png)
+![Receipt](saas_pos/screenshots/Recript.png)
 
 ---
 
@@ -214,21 +214,21 @@ This project follows a SaaS (Software as a Service) architecture where multiple 
 
 ### Revenue Dashboard
 
-![Revenue](screenshots/Recent%20Order%20History%20and%20Revenue.png)
+![Revenue](saas_pos/screenshots/Recent%20Order%20History%20and%20Revenue.png)
 
 ### Order History
 
-![Orders](screenshots/Order%20History.png)
+![Orders](saas_pos/screenshots/Order%20History.png)
 
 ---
 
 ## Restaurant Data
 
-![Data](screenshots/Restaurant%20Item%20Data.png)
+![Data](saas_pos/screenshots/Restaurant%20Item%20Data.png)
 
-![Data2](screenshots/Restaurant%20Item%20Data%20Page%202.png)
+![Data2](saas_pos/screenshots/Restaurant%20Item%20Data%20Page%202.png)
 
-![Data3](screenshots/Restaurant%20Item%20Data%201.png)
+![Data3](saas_pos/screenshots/Restaurant%20Item%20Data%201.png)
 
 ---
 
@@ -285,7 +285,7 @@ accounts/
 restaurants/
 templates/
 config/
-screenshots/
+saas_pos/screenshots/
 manage.py
 requirements.txt
 README.md
