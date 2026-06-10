@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <div class="max-w-2xl mx-auto bg-white p-8 rounded-2xl shadow-xl mt-10">
+    <div class="flex justify-between items-center mb-8 border-b pb-4">
+      <div>
+        <h1 class="text-2xl font-bold text-gray-800">⚙️ Restaurant Settings</h1>
+        <p class="text-sm text-gray-500">Update branding and payment info</p>
+      </div>
+      <a href="{% url 'dashboard' %}" class="text-gray-500 hover:text-gray-800"><i class="fas fa-times text-xl"></i></a>
+    </div>
+
+    <form method="post" enctype="multipart/form-data" class="space-y-6">
+      {% csrf_token %}
+
+      <div>
+        <label class="block text-sm font-bold text-gray-700 mb-1">Restaurant Name</label>
+        {{ form.name }}
+      </div>
+
+      <div>
+        <label class="block text-sm font-bold text-gray-700 mb-1">Address</label>
+        {{ form.address }}
+      </div>
+
+      <div>
+        <label class="block text-sm font-bold text-gray-700 mb-1 flex items-center">UPI ID (For QR Payments) <i class="fas fa-qrcode ml-2 text-green-500"></i></label>
+        {{ form.upi_id }}
+        <p class="text-xs text-gray-400 mt-1">Money will be credited to this UPI ID directly.</p>
+      </div>
+
+      <div class="bg-gray-50 p-4 rounded-lg border border-dashed border-gray-300 text-center">
+        {% if restaurant.logo %}
+          <img src="{{ restaurant.logo.url }}" class="h-20 w-20 rounded mx-auto mb-2 object-cover" />
+        {% endif %}
+        <label class="block text-sm font-bold text-blue-600 cursor-pointer hover:underline">
+          Change Logo
+          <span class="hidden">{{ form.logo }}</span>
+        </label>
+      </div>
+
+      <div class="hidden">{{ form.is_active }}</div>
+
+      <button type="submit" class="w-full bg-gray-900 text-white py-3 rounded-xl font-bold hover:bg-gray-800 shadow-lg transition">Save Changes</button>
+    </form>
+  </div>
+{% endblock %}

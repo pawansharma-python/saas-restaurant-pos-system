@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <div class="flex justify-between items-center mb-6">
+    <h1 class="text-2xl font-bold">Manage Customizations</h1>
+  </div>
+
+  <div class="bg-white p-6 rounded-lg shadow mb-8 border-l-4 border-purple-500">
+    <h3 class="font-bold text-lg mb-4">Create New Group (e.g. Size, Toppings)</h3>
+    <form method="post" class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+      {% csrf_token %}
+      <div>
+        <label class="text-sm font-bold text-gray-600">Group Name</label>
+        {{ form.name }}
+      </div>
+      <div class="flex items-center">
+        {{ form.is_required }} <span class="ml-2 text-sm">Required?</span>
+      </div>
+      <div class="flex items-center">
+        {{ form.is_multiple }} <span class="ml-2 text-sm">Multiple Select?</span>
+      </div>
+      <button type="submit" class="bg-purple-600 text-white px-4 py-2 rounded font-bold">Create Group</button>
+    </form>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    {% for group in groups %}
+      <div class="bg-white rounded-lg shadow border p-4">
+        <div class="flex justify-between items-center border-b pb-2 mb-2">
+          <h3 class="font-bold text-xl text-gray-800">{{ group.name }}</h3>
+          <a href="{% url 'delete_addon_group' group.id %}" class="text-red-500 text-sm hover:underline" onclick="return confirm('Delete this group?')">Delete</a>
+        </div>
+        <p class="text-xs text-gray-500 mb-4">
+          Type:{% if group.is_multiple %}
+            Checkbox (Multiple)
+          {% else %}
+            Radio (Single)
+          {% endif %}|{% if group.is_required %}
+            Required
+          {% else %}
+            Optional
+          {% endif %}
+        </p>
+
+        <ul class="space-y-2 mb-4">
+          {% for option in group.options.all %}
+            <li class="flex justify-between bg-gray-50 p-2 rounded text-sm">
+              <span>{{ option.name }}</span>
+              <span class="font-bold text-green-600">+ ₹{{ option.price }}</span>
+            </li>
+          {% empty %}
+            <li class="text-gray-400 text-xs">No options added yet.</li>
+          {% endfor %}
+        </ul>
+
+        <form action="{% url 'add_addon_option' group.id %}" method="post" class="flex gap-2">
+          {% csrf_token %}
+          <input type="text" name="name" placeholder="Option Name" class="border p-1 rounded w-full text-sm" required />
+          <input type="number" name="price" placeholder="Price" class="border p-1 rounded w-20 text-sm" value="0" />
+          <button type="submit" class="bg-green-600 text-white px-2 py-1 rounded text-sm">+</button>
+        </form>
+      </div>
+    {% empty %}
+      <p class="text-gray-500 col-span-2 text-center">No customization groups found.</p>
+    {% endfor %}
+  </div>
+{% endblock %}

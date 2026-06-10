@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <div class="flex justify-between items-center mb-6">
+    <h1 class="text-3xl font-bold text-gray-800"><i class="fas fa-fire text-orange-600"></i> Kitchen Dashboard (KOT)</h1>
+    <a href="{% url 'staff_dashboard' %}" class="bg-blue-600 text-white px-4 py-2 rounded shadow hover:bg-blue-700"><i class="fas fa-sync-alt"></i> Refresh Orders</a>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    {% for order in orders %}
+      <div class="bg-white rounded-lg shadow-lg border-l-8 
+        {% if order.status == 'RECEIVED' %}
+          
+          
+          border-red-500
+
+
+        {% elif order.status == 'PREPARING' %}
+          
+          
+          border-yellow-500
+
+
+        {% elif order.status == 'READY' %}
+          
+          
+          border-green-500
+
+
+        {% else %}
+          
+          
+          border-gray-500
+
+
+        {% endif %} 
+        overflow-hidden">
+        <div class="bg-gray-100 p-4 border-b flex justify-between items-center">
+          <div>
+            <span class="text-xs text-gray-500 uppercase font-bold">Table No</span>
+            <h2 class="text-3xl font-extrabold text-gray-800">{{ order.table.table_number }}</h2>
+          </div>
+          <div class="text-right">
+            <span class="block text-xs text-gray-500">Order ID: #{{ order.order_id }}</span>
+            <span class="text-xs font-bold text-gray-600">{{ order.created_at|date:'h:i A' }}</span>
+          </div>
+        </div>
+
+        <div class="p-4 space-y-3">
+          {% for item in order.items.all %}
+            <div class="flex justify-between items-start">
+              <div class="flex items-start">
+                <span class="bg-gray-200 text-gray-800 font-bold px-2 py-0.5 rounded mr-2 text-sm">{{ item.quantity }}x</span>
+                <div>
+                  <p class="font-bold text-gray-800">{{ item.food_item.name }}</p>
+                  {% if item.notes %}
+                    <p class="text-xs text-red-500 italic">Note: {{ item.notes }}</p>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+
+        <div class="p-4 bg-gray-50 border-t text-center">
+          <p class="mb-2 font-bold text-sm text-gray-500">Current Status: {{ order.get_status_display }}</p>
+
+          {% if order.status == 'RECEIVED' %}
+            <a href="{% url 'update_order_status' order.order_id 'PREPARING' %}" class="block w-full bg-red-600 text-white py-2 rounded font-bold hover:bg-red-700">Start Preparing</a>
+          {% elif order.status == 'PREPARING' %}
+            <a href="{% url 'update_order_status' order.order_id 'READY' %}" class="block w-full bg-yellow-500 text-white py-2 rounded font-bold hover:bg-yellow-600">Mark as Ready</a>
+          {% elif order.status == 'READY' %}
+            <a href="{% url 'update_order_status' order.order_id 'SERVED' %}" class="block w-full bg-green-600 text-white py-2 rounded font-bold hover:bg-green-700">Mark Served</a>
+          {% elif order.status == 'SERVED' %}
+            <a href="{% url 'update_order_status' order.order_id 'PAID' %}" class="block w-full bg-gray-800 text-white py-2 rounded font-bold hover:bg-gray-900">Complete & Close</a>
+          {% endif %}
+        </div>
+      </div>
+    {% empty %}
+      <div class="col-span-3 text-center py-20">
+        <div class="text-gray-300 text-6xl mb-4">
+          <i class="fas fa-check-circle"></i>
+        </div>
+        <h2 class="text-2xl font-bold text-gray-500">All caught up!</h2>
+        <p class="text-gray-400">No pending orders in the kitchen.</p>
+      </div>
+    {% endfor %}
+  </div>
+{% endblock %}

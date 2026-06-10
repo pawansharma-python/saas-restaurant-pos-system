@@ -1,0 +1,203 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
+
+  <div class="container mx-auto pb-12">
+    <div class="flex flex-col md:flex-row justify-between items-center mb-10 bg-white p-6 rounded-2xl shadow-sm border border-gray-100" data-aos="fade-down">
+      <div class="flex items-center">
+        {% if restaurant.logo %}
+          <img src="{{ restaurant.logo.url }}" class="h-16 w-16 rounded-xl object-cover border-2 border-gray-200 mr-4" />
+        {% else %}
+          <div class="h-16 w-16 bg-gradient-to-br from-indigo-600 to-purple-600 text-white rounded-xl flex items-center justify-center text-3xl font-bold mr-4 shadow-lg">{{ restaurant.name|first }}</div>
+        {% endif %}
+        <div>
+          <h1 class="text-3xl font-extrabold text-gray-800">{{ restaurant.name }}</h1>
+          <p class="text-gray-500 text-sm flex items-center mt-1">
+            <span class="bg-green-100 text-green-700 px-2 py-0.5 rounded text-xs font-bold mr-2">OPEN</span>
+            <i class="fas fa-map-marker-alt mr-1 text-red-400"></i> {{ restaurant.address }}
+          </p>
+        </div>
+      </div>
+
+      <div class="flex gap-3 mt-4 md:mt-0">
+        <a href="{% url 'restaurant_settings' %}" class="bg-gray-100 text-gray-700 px-5 py-3 rounded-xl font-bold hover:bg-gray-200 transition"><i class="fas fa-cog"></i> Settings</a>
+        <div class="bg-indigo-50 text-indigo-700 px-5 py-3 rounded-xl font-bold border border-indigo-100 flex flex-col items-center justify-center leading-tight">
+          <span class="text-xs uppercase tracking-wide">Operations</span>
+          <span class="text-lg">{{ operational_days }} Days</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+      <div class="bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl p-5 text-white shadow-lg transform hover:-translate-y-1 transition" data-aos="fade-up" data-aos-delay="100">
+        <p class="text-green-100 text-xs font-bold uppercase tracking-wider mb-1">Today's Revenue</p>
+        <div class="flex justify-between items-end">
+          <h2 class="text-3xl font-extrabold">₹{{ today_revenue }}</h2>
+          <i class="fas fa-chart-line text-3xl opacity-30"></i>
+        </div>
+      </div>
+
+      <div class="bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl p-5 text-white shadow-lg transform hover:-translate-y-1 transition" data-aos="fade-up" data-aos-delay="200">
+        <p class="text-blue-100 text-xs font-bold uppercase tracking-wider mb-1">Today's Orders</p>
+        <div class="flex justify-between items-end">
+          <h2 class="text-3xl font-extrabold">{{ today_orders_count }}</h2>
+          <i class="fas fa-shopping-bag text-3xl opacity-30"></i>
+        </div>
+      </div>
+
+      <div class="bg-gradient-to-br from-orange-500 to-red-500 rounded-2xl p-5 text-white shadow-lg transform hover:-translate-y-1 transition" data-aos="fade-up" data-aos-delay="300">
+        <p class="text-orange-100 text-xs font-bold uppercase tracking-wider mb-1">Kitchen Pending</p>
+        <div class="flex justify-between items-end">
+          <h2 class="text-3xl font-extrabold">{{ pending_orders }}</h2>
+          <i class="fas fa-fire text-3xl opacity-30 animate-pulse"></i>
+        </div>
+      </div>
+
+      <div class="bg-gradient-to-br from-purple-500 to-pink-600 rounded-2xl p-5 text-white shadow-lg transform hover:-translate-y-1 transition" data-aos="fade-up" data-aos-delay="400">
+        <p class="text-purple-100 text-xs font-bold uppercase tracking-wider mb-1">Staff Present</p>
+        <div class="flex justify-between items-end">
+          <h2 class="text-3xl font-extrabold">{{ present_staff_count }} <span class="text-lg opacity-60">/ {{ total_staff_count }}</span></h2>
+          <i class="fas fa-user-check text-3xl opacity-30"></i>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div class="lg:col-span-2 space-y-8">
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6" data-aos="fade-right">
+          <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center"><i class="fas fa-users text-blue-600 mr-2"></i> Team Composition</h3>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="flex items-center p-4 bg-purple-50 rounded-xl border border-purple-100">
+              <div class="bg-purple-200 p-3 rounded-full text-purple-700 mr-3">
+                <i class="fas fa-user-tie"></i>
+              </div>
+              <div>
+                <p class="text-xs text-purple-600 font-bold uppercase">Managers</p>
+                <p class="text-xl font-bold text-gray-800">{{ total_managers }}</p>
+              </div>
+            </div>
+            <div class="flex items-center p-4 bg-green-50 rounded-xl border border-green-100">
+              <div class="bg-green-200 p-3 rounded-full text-green-700 mr-3">
+                <i class="fas fa-concierge-bell"></i>
+              </div>
+              <div>
+                <p class="text-xs text-green-600 font-bold uppercase">Waiters</p>
+                <p class="text-xl font-bold text-gray-800">{{ total_waiters }}</p>
+              </div>
+            </div>
+            <div class="flex items-center p-4 bg-orange-50 rounded-xl border border-orange-100">
+              <div class="bg-orange-200 p-3 rounded-full text-orange-700 mr-3">
+                <i class="fas fa-hat-chef"></i>
+              </div>
+              <div>
+                <p class="text-xs text-orange-600 font-bold uppercase">Kitchen</p>
+                <p class="text-xl font-bold text-gray-800">{{ total_kitchen }}</p>
+              </div>
+            </div>
+          </div>
+          <div class="mt-4 text-right">
+            <a href="{% url 'manage_staff' %}" class="text-sm text-blue-600 font-bold hover:underline">Manage All Staff &rarr;</a>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden" data-aos="fade-up">
+          <div class="bg-gray-50 px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+            <h3 class="font-bold text-gray-700">📋 Recent Orders</h3>
+            <span class="text-xs bg-green-100 text-green-700 px-2 py-1 rounded font-bold animate-pulse">● Live</span>
+          </div>
+          <table class="w-full text-left">
+            <tbody class="divide-y divide-gray-100 text-sm">
+              {% for order in recent_orders %}
+                <tr class="hover:bg-gray-50 transition">
+                  <td class="px-6 py-4 font-mono font-bold text-blue-600">#{{ order.order_id }}</td>
+                  <td class="px-6 py-4 font-bold text-gray-800">T-{{ order.table.table_number }}</td>
+                  <td class="px-6 py-4 text-green-600 font-bold">₹{{ order.total_amount }}</td>
+                  <td class="px-6 py-4">
+                    <span class="px-2 py-1 rounded text-xs font-bold
+                                {% if order.status == 'COMPLETED' %}
+                        bg-gray-200 text-gray-700
+
+                      {% elif order.status == 'SERVED' %}
+                        bg-blue-100 text-blue-700
+
+                      {% elif order.status == 'READY' %}
+                        bg-green-100 text-green-700
+
+                      {% else %}
+                        bg-yellow-100 text-yellow-700
+                      {% endif %}">
+                      {{ order.get_status_display }}
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 text-gray-500">{{ order.created_at|date:'h:i A' }}</td>
+                </tr>
+              {% empty %}
+                <tr>
+                  <td colspan="5" class="px-6 py-8 text-center text-gray-400">No orders today yet.</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="space-y-8">
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6" data-aos="fade-left">
+          <h3 class="font-bold text-gray-800 mb-4 flex justify-between items-center">
+            <span>⏱️ Today's Check-ins</span>
+            <span class="text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded-full">{{ present_staff_count }} Present</span>
+          </h3>
+          <div class="space-y-4">
+            {% for log in recent_attendance %}
+              <div class="flex items-center space-x-3 border-b border-gray-50 pb-2 last:border-0">
+                {% if log.staff.profile_picture %}
+                  <img src="{{ log.staff.profile_picture.url }}" class="w-10 h-10 rounded-full object-cover" />
+                {% else %}
+                  <div class="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center font-bold text-gray-500 text-xs">{{ log.staff.username|first|upper }}</div>
+                {% endif %}
+                <div class="flex-1">
+                  <p class="text-sm font-bold text-gray-800">{{ log.staff.first_name }}</p>
+                  <p class="text-xs text-gray-500">{{ log.staff.get_role_display }}</p>
+                </div>
+                <span class="text-xs font-mono text-green-600 bg-green-50 px-2 py-1 rounded">{{ log.clock_in|date:'h:i A' }}</span>
+              </div>
+            {% empty %}
+              <p class="text-sm text-gray-400 text-center py-4">No staff clocked in yet.</p>
+            {% endfor %}
+          </div>
+          <div class="mt-4 pt-3 border-t border-gray-100 text-center">
+            <a href="#" class="text-xs text-purple-600 font-bold hover:underline">View Full Attendance History</a>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6" data-aos="fade-left" data-aos-delay="100">
+          <h3 class="font-bold text-gray-800 mb-4">⚡ Quick Actions</h3>
+          <div class="grid grid-cols-2 gap-4">
+            <a href="{% url 'manage_menu' %}" class="bg-orange-50 text-orange-700 p-4 rounded-xl text-center hover:bg-orange-100 transition">
+              <i class="fas fa-utensils text-2xl mb-2"></i>
+              <p class="text-xs font-bold">Menu</p>
+            </a>
+            <a href="{% url 'manage_tables' %}" class="bg-blue-50 text-blue-700 p-4 rounded-xl text-center hover:bg-blue-100 transition">
+              <i class="fas fa-qrcode text-2xl mb-2"></i>
+              <p class="text-xs font-bold">Tables</p>
+            </a>
+            <a href="{% url 'manage_staff' %}" class="bg-green-50 text-green-700 p-4 rounded-xl text-center hover:bg-green-100 transition">
+              <i class="fas fa-users text-2xl mb-2"></i>
+              <p class="text-xs font-bold">Staff</p>
+            </a>
+            <a href="{% url 'manage_addons' %}" class="bg-purple-50 text-purple-700 p-4 rounded-xl text-center hover:bg-purple-100 transition">
+              <i class="fas fa-layer-group text-2xl mb-2"></i>
+              <p class="text-xs font-bold">Add-ons</p>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script>
+    AOS.init({ once: true, duration: 800 })
+  </script>
+{% endblock %}

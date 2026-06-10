@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <div class="flex justify-between items-center mb-6">
+    <h1 class="text-2xl font-bold text-gray-800">Staff Management</h1>
+    <a href="{% url 'add_staff' %}" class="bg-orange-600 text-white px-4 py-2 rounded shadow hover:bg-orange-700"><i class="fas fa-user-plus mr-2"></i> Add New Staff</a>
+  </div>
+
+  <div class="bg-white shadow rounded-lg overflow-hidden">
+    <table class="min-w-full leading-normal">
+      <thead>
+        <tr>
+          <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Name</th>
+          <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Role</th>
+          <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Username (Login ID)</th>
+          <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for staff in staff_members %}
+          <tr>
+            <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+              <div class="flex items-center">
+                <div class="flex-shrink-0 w-10 h-10">
+                  {% if staff.profile_picture %}
+                    <img class="w-full h-full rounded-full" src="{{ staff.profile_picture.url }}" />
+                  {% else %}
+                    <div class="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center font-bold text-gray-600">{{ staff.first_name|first }}</div>
+                  {% endif %}
+                </div>
+                <div class="ml-3">
+                  <p class="text-gray-900 whitespace-no-wrap font-bold">{{ staff.first_name }} {{ staff.last_name }}</p>
+                </div>
+              </div>
+            </td>
+            <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+              <span class="relative inline-block px-3 py-1 font-semibold leading-tight 
+                    {% if staff.role == 'WAITER' %}
+                  text-green-900 bg-green-200
+                {% elif staff.role == 'KITCHEN' %}
+                  text-red-900 bg-red-200
+                {% else %}
+                  text-blue-900 bg-blue-200
+                {% endif %} rounded-full">
+                <span aria-hidden="true" class="absolute inset-0 opacity-50 rounded-full"></span>
+                <span class="relative">{{ staff.get_role_display }}</span>
+              </span>
+            </td>
+            <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+              <p class="text-gray-900 whitespace-no-wrap">{{ staff.username }}</p>
+            </td>
+            <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+              <span class="text-green-600 font-bold">Active</span>
+            </td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="4" class="px-5 py-5 border-b border-gray-200 bg-white text-sm text-center">No staff added yet. Click "Add New Staff" to start.</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock %}

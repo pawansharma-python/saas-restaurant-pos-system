@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <div class="container mx-auto">
+    <div class="flex justify-between items-center mb-6">
+      <h1 class="text-2xl font-bold">🍔 Menu Database: {{ restaurant.name }}</h1>
+      <a href="{% url 'super_restaurant_detail' restaurant.pk %}" class="bg-gray-200 px-4 py-2 rounded hover:bg-gray-300">Back</a>
+    </div>
+
+    <div class="bg-white shadow rounded-lg overflow-hidden">
+      <table class="w-full text-left">
+        <thead class="bg-gray-800 text-white uppercase text-xs">
+          <tr>
+            <th class="p-3">Image</th>
+            <th class="p-3">Category</th>
+            <th class="p-3">Item Name</th>
+            <th class="p-3">Price</th>
+            <th class="p-3">Type</th>
+            <th class="p-3">Status</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-200">
+          {% for item in page_obj %}
+            <tr class="hover:bg-gray-50">
+              <td class="p-3">
+                {% if item.image %}
+                  <img src="{{ item.image.url }}" class="w-10 h-10 rounded object-cover border" />
+                {% else %}
+                  <div class="w-10 h-10 bg-gray-200 rounded flex items-center justify-center text-xs">No Img</div>
+                {% endif %}
+              </td>
+              <td class="p-3 text-sm font-bold text-gray-500">{{ item.category.name }}</td>
+              <td class="p-3 font-bold text-gray-800">{{ item.name }}</td>
+              <td class="p-3 text-green-600 font-bold">₹{{ item.price }}</td>
+              <td class="p-3">
+                {% if item.is_veg %}
+                  <span class="text-green-600 border border-green-600 px-1 rounded text-xs font-bold">VEG</span>
+                {% else %}
+                  <span class="text-red-600 border border-red-600 px-1 rounded text-xs font-bold">NON-VEG</span>
+                {% endif %}
+              </td>
+              <td class="p-3">
+                {% if item.is_available %}
+                  <span class="bg-green-100 text-green-800 px-2 py-1 rounded text-xs font-bold">In Stock</span>
+                {% else %}
+                  <span class="bg-red-100 text-red-800 px-2 py-1 rounded text-xs font-bold">Out of Stock</span>
+                {% endif %}
+              </td>
+            </tr>
+          {% empty %}
+            <tr>
+              <td colspan="6" class="p-8 text-center text-gray-500">No menu items found.</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    {% if page_obj.has_other_pages %}
+      <div class="mt-6 flex justify-center items-center space-x-2">
+        {% if page_obj.has_previous %}
+          <a href="?page={{ page_obj.previous_page_number }}" class="px-4 py-2 bg-white border rounded hover:bg-gray-100">Previous</a>
+        {% endif %}
+
+        <span class="px-4 py-2 bg-blue-600 text-white rounded font-bold">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+
+        {% if page_obj.has_next %}
+          <a href="?page={{ page_obj.next_page_number }}" class="px-4 py-2 bg-white border rounded hover:bg-gray-100">Next</a>
+        {% endif %}
+      </div>
+    {% endif %}
+  </div>
+{% endblock %}

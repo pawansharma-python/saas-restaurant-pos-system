@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <div class="max-w-2xl mx-auto bg-white p-8 rounded-lg shadow">
+    <div class="flex justify-between items-center mb-6">
+      <h2 class="text-2xl font-bold text-gray-800">
+        {% if is_edit %}
+          Edit Item: <span class="text-orange-600">{{ item_name }}</span>
+        {% else %}
+          Add New Menu Item
+        {% endif %}
+      </h2>
+
+      <a href="{% url 'manage_menu' %}" class="text-gray-500 hover:text-gray-700"><i class="fas fa-times"></i> Cancel</a>
+    </div>
+
+    <form method="post" enctype="multipart/form-data" class="space-y-4">
+      {% csrf_token %}
+
+      {% if form.errors %}
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4">
+          <strong>Error:</strong> Please correct the errors below.
+          {{ form.errors }}
+        </div>
+      {% endif %}
+
+      <div>
+        <label class="block text-gray-700 font-bold mb-2">Category</label>
+        {{ form.category }}
+        <p class="text-xs text-gray-500 mt-1">Select category (e.g. Starters, Main Course)</p>
+      </div>
+
+      <div>
+        <label class="block text-gray-700 font-bold mb-2">Item Name</label>
+        {{ form.name }}
+      </div>
+
+      <div>
+        <label class="block text-gray-700 font-bold mb-2">Description</label>
+        {{ form.description }}
+      </div>
+
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="block text-gray-700 font-bold mb-2">Price (₹)</label>
+          {{ form.price }}
+        </div>
+
+        <div>
+          <label class="block text-gray-700 font-bold mb-2">Prep Time (mins)</label>
+          {{ form.preparation_time }}
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-gray-700 font-bold mb-2">Food Image</label>
+        {{ form.image }}
+        {% if is_edit and form.instance.image %}
+          <p class="text-xs text-green-600 mt-1">Current Image Exists. Upload new to change.</p>
+        {% endif %}
+      </div>
+
+      <div class="flex space-x-8 pt-2 bg-gray-50 p-4 rounded border border-gray-200">
+        <div class="flex items-center">
+          {{ form.is_veg }}
+          <label class="ml-2 text-gray-700 font-semibold cursor-pointer">Vegetarian?</label>
+        </div>
+        <div class="flex items-center">
+          {{ form.is_available }}
+          <label class="ml-2 text-gray-700 font-semibold cursor-pointer">Available (In Stock)?</label>
+        </div>
+      </div>
+
+      <div class="border-t pt-4 mt-4">
+        <label class="block text-gray-700 font-bold mb-2">Link Add-ons (Optional)</label>
+        <div class="bg-gray-50 p-4 rounded border max-h-40 overflow-y-auto">
+          {% for checkbox in form.addon_groups %}
+            <div class="flex items-center mb-2">
+              {{ checkbox.tag }}
+              <label for="{{ checkbox.id_for_label }}" class="ml-2 text-sm text-gray-700 cursor-pointer">{{ checkbox.choice_label }}</label>
+            </div>
+          {% empty %}
+            <p class="text-sm text-gray-400">No add-ons created yet. Go to 'Manage Add-ons' first.</p>
+          {% endfor %}
+        </div>
+        <p class="text-xs text-gray-500 mt-1">Select groups like 'Size' or 'Toppings' to attach to this item.</p>
+      </div>
+
+      <button type="submit" class="w-full bg-orange-600 text-white py-3 rounded-lg font-bold hover:bg-orange-700 shadow mt-6 transition">
+        {% if is_edit %}
+          <i class="fas fa-save mr-2"></i> Update Item
+        {% else %}
+          <i class="fas fa-plus mr-2"></i> Save Menu Item
+        {% endif %}
+      </button>
+    </form>
+  </div>
+{% endblock %}

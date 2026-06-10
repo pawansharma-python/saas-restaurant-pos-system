@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <div class="flex justify-between items-center mb-6">
+    <h1 class="text-2xl font-bold text-gray-800">🤵 Waiter Dashboard (Active Tables)</h1>
+    <a href="{% url 'waiter_dashboard' %}" class="bg-blue-600 text-white px-4 py-2 rounded"><i class="fas fa-sync"></i> Refresh</a>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    {% for order in orders %}
+      <div class="bg-white rounded-lg shadow-lg border-t-4 border-blue-500 p-4">
+        <div class="flex justify-between items-center mb-4">
+          <h2 class="text-3xl font-bold text-gray-800">Table {{ order.table.table_number }}</h2>
+          <span class="px-3 py-1 rounded-full text-sm font-bold 
+                {% if order.status == 'READY' %}
+              
+              
+              
+              bg-green-100 text-green-700
+
+
+
+            {% else %}
+              
+              
+              
+              bg-yellow-100 text-yellow-700
+
+
+
+            {% endif %}">
+            {{ order.get_status_display }}
+          </span>
+        </div>
+
+        <div class="space-y-1 mb-4 bg-gray-50 p-2 rounded max-h-60 overflow-y-auto border border-gray-200">
+          {% for item in order.items.all|dictsort:'created_at' %}
+            <div class="flex justify-between items-start text-sm border-b border-gray-200 pb-1 pt-1 last:border-0">
+              <div class="flex flex-col">
+                <div class="flex items-center">
+                  <span class="font-bold mr-2 text-gray-800">{{ item.quantity }}x</span>
+                  <span class="text-gray-900 font-bold">{{ item.food_item.name }}</span>
+                  {% if item.customizations %}
+                    <div class="text-xs text-gray-500 mt-1">
+                      {% for addon in item.customizations %}
+                        <span class="bg-gray-200 px-1 rounded mr-1">+ {{ addon }}</span>
+                      {% endfor %}
+                    </div>
+                  {% endif %}
+                </div>
+
+                <span class="text-[10px] text-gray-500">
+                  Ordered at: {{ item.created_at|date:'h:i A' }}
+                  {% if not item.is_prepared %}
+                    <span class="text-red-500 font-bold ml-1">(Preparing)</span>
+                  {% else %}
+                    <span class="text-green-600 font-bold ml-1">(Served)</span>
+                  {% endif %}
+                </span>
+              </div>
+
+              <span class="font-bold text-gray-600 mt-1">₹{{ item.price }}</span>
+            </div>
+          {% endfor %}
+        </div>
+
+        <div class="flex justify-between items-center border-t pt-2 mb-4">
+          <span class="text-gray-500">Total Bill:</span>
+          <span class="text-2xl font-bold text-gray-800">₹{{ order.total_amount }}</span>
+        </div>
+
+        <a href="{% url 'generate_bill' order.order_id %}" class="block w-full bg-gray-900 text-white text-center py-3 rounded-lg font-bold hover:bg-gray-800 transition"><i class="fas fa-receipt"></i> Generate Bill / Collect Payment</a>
+      </div>
+    {% empty %}
+      <div class="col-span-3 text-center py-10 text-gray-400">
+        <i class="fas fa-chair text-4xl mb-2"></i>
+        <p>No active tables currently.</p>
+      </div>
+    {% endfor %}
+  </div>
+{% endblock %}

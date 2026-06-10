@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-100 flex items-center justify-center p-4">
+    
+    <div class="bg-white w-full max-w-sm rounded-3xl shadow-2xl overflow-hidden relative">
+        
+        <div class="bg-green-600 h-4"></div>
+
+        <div class="bg-green-600 text-white text-center pb-8 pt-6 rounded-b-[2.5rem]">
+            <div class="w-16 h-16 bg-white text-green-600 rounded-full flex items-center justify-center mx-auto mb-3 shadow-md animate-bounce">
+                <i class="fas fa-check text-3xl"></i>
+            </div>
+            <h1 class="text-2xl font-bold">Payment Successful</h1>
+            <p class="text-green-100 text-sm">Thank you for dining with us!</p>
+        </div>
+
+        <div class="px-8 py-6 space-y-4">
+            
+            <div class="text-center border-b border-dashed border-gray-300 pb-4">
+                <p class="text-gray-500 text-xs uppercase tracking-widest">Total Amount Paid</p>
+                <p class="text-4xl font-extrabold text-gray-800 mt-1">₹{{ order.total_amount }}</p>
+            </div>
+
+            <div class="space-y-3 text-sm">
+                
+                <div class="flex justify-between">
+                    <span class="text-gray-500">Date & Time</span>
+                    <span class="font-semibold text-gray-800">{{ order.updated_at|date:"d M Y, h:i A" }}</span>
+                </div>
+
+                <div class="flex justify-between">
+                    <span class="text-gray-500">Order ID</span>
+                    <span class="font-mono font-bold text-gray-800">#{{ order.order_id|slice:":8" }}</span>
+                </div>
+
+                <div class="flex justify-between">
+                    <span class="text-gray-500">Paid To</span>
+                    <span class="font-bold text-blue-600">{{ order.restaurant.name }}</span>
+                </div>
+
+                <div class="flex justify-between">
+                    <span class="text-gray-500">Paid By</span>
+                    <span class="font-bold text-gray-800">
+                        {% if order.payer_name %}
+                            {{ order.payer_name }}
+                        {% else %}
+                            Walk-in Customer
+                        {% endif %}
+                    </span>
+                </div>
+
+                <div class="flex justify-between">
+                    <span class="text-gray-500">Method</span>
+                    <span class="font-bold px-2 py-0.5 rounded bg-gray-100 text-gray-700 text-xs uppercase">
+                        {{ order.payment_method }}
+                    </span>
+                </div>
+
+                <div class="flex justify-between items-start">
+                    <span class="text-gray-500">Txn / Ref No.</span>
+                    <span class="font-mono text-xs text-gray-600 text-right max-w-[150px] break-all">
+                        {{ order.transaction_id }}
+                    </span>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="bg-gray-50 p-4 border-t border-gray-200 text-center space-y-3">
+            <button onclick="window.print()" class="text-blue-600 font-bold text-sm hover:underline">
+                <i class="fas fa-download mr-1"></i> Download Receipt
+            </button>
+            
+            <a href="{% url 'waiter_dashboard' %}" class="block w-full bg-gray-800 text-white font-bold py-3 rounded-xl shadow hover:bg-gray-900 transition">
+                Back to Dashboard
+            </a>
+        </div>
+
+        <div class="absolute bottom-0 left-0 w-full h-2 bg-repeat-x" style="background: linear-gradient(45deg, transparent 33.333%, #ffffff 33.333%, #ffffff 66.667%, transparent 66.667%), linear-gradient(-45deg, transparent 33.333%, #ffffff 33.333%, #ffffff 66.667%, transparent 66.667%); background-size: 10px 20px;"></div>
+    </div>
+
+</div>
+{% endblock %}

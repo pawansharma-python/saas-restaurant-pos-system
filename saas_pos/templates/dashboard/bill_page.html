@@ -1,0 +1,252 @@
+{% extends 'base.html' %} {% block content %}
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<div
+  class="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4"
+>
+  <div class="bg-white w-full max-w-md rounded-2xl shadow-xl overflow-hidden">
+    <div class="bg-blue-600 p-6 text-center text-white relative">
+      <h1 class="text-2xl font-bold tracking-wider">TOTAL PAYABLE</h1>
+      <div class="text-4xl font-extrabold mt-2">₹{{ order.total_amount }}</div>
+      <p class="text-sm opacity-80 mt-1">
+        Order #{{ order.order_id|slice:":8" }}
+      </p>
+      <a
+        href="{% url 'waiter_dashboard' %}"
+        class="absolute top-4 right-4 text-white hover:text-gray-200"
+        ><i class="fas fa-times text-xl"></i
+      ></a>
+    </div>
+
+    <div class="p-6 bg-white flex flex-col items-center border-b">
+      {% if order.restaurant.upi_id %}
+      <p class="text-sm font-bold text-gray-500 mb-3 uppercase tracking-wide">
+        Scan & Pay ₹{{ order.total_amount }}
+      </p>
+
+      <div
+        class="p-2 border-2 border-dashed border-blue-300 rounded-xl relative group"
+      >
+        <img
+          src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa={{ order.restaurant.upi_id }}&pn={{ order.restaurant.name }}&am={{ order.total_amount }}&cu=INR"
+          alt="Dynamic Payment QR"
+          class="w-48 h-48 object-contain"
+        />
+
+        <div
+          class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition bg-white bg-opacity-80"
+        >
+          <span class="text-xs font-bold text-blue-600">Amount Linked</span>
+        </div>
+      </div>
+
+      <p class="text-xs text-gray-400 mt-2">{{ order.restaurant.upi_id }}</p>
+
+      <button
+        onclick="confirmManualPayment('QR_SCAN')"
+        class="mt-4 w-full bg-blue-600 text-white font-bold py-3 rounded-xl shadow-lg hover:bg-blue-700 transition"
+      >
+        Payment Received via QR
+      </button>
+
+      {% elif order.restaurant.payment_qr %}
+      <p class="text-sm font-bold text-gray-500 mb-3 uppercase tracking-wide">
+        Scan QR Code
+      </p>
+      <div class="p-2 border-2 border-dashed border-gray-300 rounded-xl">
+        <img
+          src="{{ order.restaurant.payment_qr.url }}"
+          alt="Static QR"
+          class="w-48 h-48 object-contain"
+        />
+      </div>
+      <p class="text-xs text-red-400 mt-2">Note: Enter amount manually</p>
+      <button
+        onclick="confirmManualPayment('QR_SCAN')"
+        class="mt-4 w-full bg-blue-600 text-white font-bold py-3 rounded-xl shadow-lg hover:bg-blue-700 transition"
+      >
+        Payment Received via QR
+      </button>
+
+      {% else %}
+      <div class="text-center text-gray-400 py-4">
+        <i class="fas fa-qrcode text-4xl mb-2"></i>
+        <p class="text-sm">No UPI ID or QR Setup</p>
+      </div>
+      {% endif %}
+    </div>
+
+    <div class="p-6 bg-gray-50 border-b">
+      <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">
+        Order Details
+      </h3>
+
+      <div class="space-y-3">
+        {% for item in order.items.all %}
+        <div
+          class="flex justify-between items-start text-sm text-gray-700 border-b border-dashed border-gray-200 pb-2"
+        >
+          <div>
+            <span class="font-bold text-gray-900">{{ item.quantity }} x</span>
+            <span class="font-medium">{{ item.food_item.name }}</span>
+
+            <div class="text-xs text-gray-400 mt-0.5">
+              (@ ₹{{ item.price }})
+            </div>
+
+            {% if item.customizations %}
+            <div class="flex flex-wrap gap-1 mt-1">
+              {% for addon in item.customizations %}
+              <span
+                class="text-[10px] bg-white border border-gray-200 px-1 rounded text-gray-500"
+                >{{ addon }}</span
+              >
+              {% endfor %}
+            </div>
+            {% endif %}
+          </div>
+
+          <span class="font-bold text-gray-900">
+            ₹{% widthratio item.price 1 item.quantity %}
+          </span>
+        </div>
+        {% endfor %}
+      </div>
+
+      <div class="pt-4 space-y-2">
+        <div class="flex justify-between text-gray-600 text-sm">
+          <span>Item Total</span>
+          <span>₹{{ subtotal }}</span>
+        </div>
+        <div class="flex justify-between text-gray-600 text-sm">
+          <span>GST (5%)</span>
+          <span>₹{{ tax_amount }}</span>
+        </div>
+
+        <div class="border-t border-gray-300 my-2"></div>
+
+        <div class="flex justify-between text-xl font-extrabold text-gray-900">
+          <span>Grand Total</span>
+          <span>₹{{ order.total_amount }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="p-6 bg-gray-50 space-y-3">
+      {% if order.restaurant.razorpay_key_id %}
+      <button
+        onclick="payWithRazorpay()"
+        class="w-full flex items-center justify-between p-4 bg-white border border-purple-200 rounded-xl shadow-sm hover:bg-purple-50 transition"
+      >
+        <div class="flex items-center">
+          <div class="bg-purple-100 p-2 rounded-full mr-3 text-purple-600">
+            <i class="fas fa-credit-card"></i>
+          </div>
+          <div class="text-left">
+            <span class="block font-bold text-gray-800">Pay via Gateway</span>
+            <span class="text-xs text-gray-500">Cards / Netbanking</span>
+          </div>
+        </div>
+        <i class="fas fa-chevron-right text-gray-300"></i>
+      </button>
+      {% endif %}
+
+      <form
+        action="{% url 'complete_payment' order.order_id %}"
+        method="POST"
+        id="cashForm"
+      >
+        {% csrf_token %}
+        <input type="hidden" name="payment_method" value="CASH" />
+        <button
+          type="button"
+          onclick="confirmManualPayment('CASH')"
+          class="w-full flex items-center justify-between p-4 bg-white border border-green-200 rounded-xl shadow-sm hover:bg-green-50 transition"
+        >
+          <div class="flex items-center">
+            <div class="bg-green-100 p-2 rounded-full mr-3 text-green-600">
+              <i class="fas fa-money-bill-wave"></i>
+            </div>
+            <span class="font-bold text-gray-700">Cash Payment</span>
+          </div>
+          <i class="fas fa-check text-green-600"></i>
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+  // --- STATIC QR / CASH LOGIC ---
+  function confirmManualPayment(type) {
+    let msg =
+      type === "QR_SCAN"
+        ? "Confirm customer paid via QR?"
+        : "Confirm cash received?";
+    Swal.fire({
+      title: "Verify Payment",
+      text: msg,
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonText: "Yes, Confirm",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        document.getElementById("cashForm").submit();
+      }
+    });
+  }
+
+  // --- RAZORPAY LOGIC ---
+  function payWithRazorpay() {
+    Swal.fire({ title: "Connecting...", didOpen: () => Swal.showLoading() });
+
+    fetch("{% url 'start_payment' order.order_id %}")
+      .then((res) => res.json())
+      .then((data) => {
+        Swal.close();
+        if (data.status === "error") {
+          Swal.fire("Error", data.message, "error");
+          return;
+        }
+
+        var options = {
+          key: data.key_id,
+          amount: data.amount,
+          currency: "INR",
+          name: "{{ order.restaurant.name }}",
+          description: "Order #{{ order.order_id|slice:':8' }}",
+          order_id: data.razorpay_order_id,
+          handler: function (response) {
+            verifyRazorpay(response, data.order_id);
+          },
+          theme: { color: "#2563eb" },
+        };
+        var rzp1 = new Razorpay(options);
+        rzp1.open();
+      })
+      .catch((err) => Swal.fire("Error", "Gateway Error", "error"));
+  }
+
+  function verifyRazorpay(response, orderId) {
+    fetch("{% url 'verify_payment' %}", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        razorpay_order_id: response.razorpay_order_id,
+        razorpay_payment_id: response.razorpay_payment_id,
+        razorpay_signature: response.razorpay_signature,
+        custom_order_id: orderId,
+      }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.status === "success") {
+          window.location.href = "{% url 'waiter_dashboard' %}";
+        } else {
+          Swal.fire("Failed", "Payment Verification Failed", "error");
+        }
+      });
+  }
+</script>
+{% endblock %}

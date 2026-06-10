@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <div class="max-w-md mx-auto bg-white min-h-screen pb-48"> <div class="p-4 border-b bg-white sticky top-0 z-10 shadow-sm flex justify-between items-center">
+      <div>
+        <h1 class="text-xl font-bold text-gray-800">Your Cart</h1>
+        <p class="text-xs text-gray-500 font-bold">
+            Table No: <span class="text-blue-600 text-lg">{{ table.table_number }}</span>
+        </p>
+      </div>
+      <a href="javascript:history.back()" class="text-sm text-blue-600 font-semibold">
+        + Add Items
+      </a>
+    </div>
+
+    <div class="p-4 space-y-4">
+      {% if items %}
+        {% for item in items %}
+          <div class="flex flex-col border-b pb-4 last:border-0">
+            
+            <div class="flex justify-between items-start mb-2">
+              <div>
+                <h3 class="font-bold text-gray-800 text-lg">{{ item.name }}</h3>
+                <div class="text-sm text-gray-600">₹{{ item.price }}</div>
+                
+                {% if item.addons %}
+                  <div class="mt-1 flex flex-wrap gap-1">
+                    {% for addon in item.addons %}
+                      <span class="text-[10px] bg-gray-100 text-gray-600 px-2 py-0.5 rounded border border-gray-200">
+                        {{ addon }}
+                      </span>
+                    {% endfor %}
+                  </div>
+                {% endif %}
+              </div>
+              
+              <div class="font-bold text-gray-900">₹{{ item.subtotal }}</div>
+            </div>
+
+            <div class="flex items-center justify-between mt-1">
+              <div class="flex items-center bg-gray-100 rounded-lg overflow-hidden border border-gray-200">
+                <a href="{% url 'decrease_quantity' item.key %}" class="w-8 h-8 flex items-center justify-center text-gray-600 hover:bg-gray-200 font-bold active:bg-gray-300 transition">-</a>
+                
+                <span class="w-8 text-center text-sm font-bold text-gray-800">{{ item.qty }}</span>
+                
+                <a href="{% url 'increase_quantity' item.key %}" class="w-8 h-8 flex items-center justify-center text-green-600 hover:bg-gray-200 font-bold active:bg-gray-300 transition">+</a>
+              </div>
+            </div>
+
+          </div>
+        {% endfor %}
+      {% else %}
+        <div class="text-center py-10 text-gray-500">
+          <i class="fas fa-shopping-basket text-4xl mb-3 text-gray-300"></i>
+          <p>Your cart is empty.</p>
+          <a href="javascript:history.back()" class="text-blue-500 mt-2 inline-block">Go to Menu</a>
+        </div>
+      {% endif %}
+    </div>
+
+    {% if items %}
+    <div class="fixed bottom-0 left-0 w-full bg-white shadow-[0_-4px_10px_rgba(0,0,0,0.1)] border-t z-20 rounded-t-2xl">
+      
+      <div class="p-5 bg-white rounded-t-2xl space-y-2">
+        
+        <div class="flex justify-between text-sm text-gray-600">
+          <span>Item Total</span>
+          <span>₹{{ subtotal }}</span>
+        </div>
+
+        <div class="flex justify-between text-sm text-gray-600">
+          <span>Taxes & Charges (5%)</span>
+          <span>₹{{ tax_amount }}</span>
+        </div>
+
+        <div class="border-t border-dashed border-gray-300 my-2"></div>
+
+        <div class="flex justify-between text-xl font-extrabold text-gray-900">
+          <span>To Pay</span>
+          <span>₹{{ total_price }}</span>
+        </div>
+      </div>
+
+      <div class="px-5 pb-5">
+        <form action="{% url 'place_order' table_id %}" method="post">
+          {% csrf_token %}
+          <button type="submit" class="w-full bg-green-600 text-white py-3.5 rounded-xl font-bold text-lg shadow-lg hover:bg-green-700 active:scale-[0.98] transition flex justify-center items-center">
+            Place Order <i class="fas fa-arrow-right ml-2"></i>
+          </button>
+        </form>
+      </div>
+    </div>
+    {% endif %}
+
+  </div>
+{% endblock %}

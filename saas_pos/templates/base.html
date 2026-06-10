@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SaaS POS System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+  </head>
+  <body class="bg-gray-100 font-sans">
+    <nav class="bg-white shadow-md p-4 sticky top-0 z-50">
+      <div class="container mx-auto flex justify-between items-center">
+        <a href="{% url 'dashboard' %}" class="text-2xl font-bold text-orange-600"><i class="fas fa-utensils"></i> SaaS POS</a>
+
+       <div class="flex items-center space-x-4">
+    {% if user.is_authenticated %}
+        <div class="flex items-center">
+            {% if user.profile_picture %}
+                <img src="{{ user.profile_picture.url }}" class="w-8 h-8 rounded-full mr-2">
+            {% endif %}
+            <span class="text-gray-600 mr-4">{{ user.username }} ({{ user.role }})</span>
+            
+            <form action="{% url 'logout' %}" method="post" class="inline">
+                {% csrf_token %}
+                <button type="submit" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm">
+                    Logout
+                </button>
+            </form>
+        </div>
+    {% else %}
+        <a href="{% url 'login' %}" class="text-blue-500 font-bold">Login</a>
+    {% endif %}
+</div>
+    </nav>
+
+    <div class="container mx-auto mt-6 p-4">
+      {% block content %}
+      {% endblock %}
+    </div>
+  </body>
+</html>

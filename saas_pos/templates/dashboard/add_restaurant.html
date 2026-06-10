@@ -1,0 +1,41 @@
+
+
+{% extends 'base.html' %}
+
+{% block content %}
+  <div class="max-w-2xl mx-auto bg-white p-8 rounded-lg shadow">
+    <h2 class="text-2xl font-bold mb-6">Add New Restaurant</h2>
+
+    <form method="post" enctype="multipart/form-data" class="space-y-4">
+      {% csrf_token %}
+
+      <div>
+        <label class="block text-gray-700 font-bold mb-2">Restaurant Name</label>
+        {{ form.name }}
+      </div>
+
+      <div>
+        <label class="block text-gray-700 font-bold mb-2">Assign Owner (Admin)</label>
+        {{ form.owner }}
+        <p class="text-sm text-gray-500 mt-1">Select a user with 'Restaurant Owner' role.</p>
+      </div>
+
+      <div>
+        <label class="block text-gray-700 font-bold mb-2">Address</label>
+        {{ form.address }}
+      </div>
+
+      <div>
+        <label class="block text-gray-700 font-bold mb-2">Logo</label>
+        {{ form.logo }}
+      </div>
+
+      <div class="flex items-center">
+        {{ form.is_active }}
+        <label class="ml-2 text-gray-700">Is Active?</label>
+      </div>
+
+      <button type="submit" class="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700 font-bold mt-4">Create Restaurant</button>
+    </form>
+  </div>
+{% endblock %} 

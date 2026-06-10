@@ -1,0 +1,123 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="bg-gray-800 min-h-screen p-4 -m-4">
+  <div class="flex justify-between items-center mb-6 text-white">
+    <h1 class="text-3xl font-bold">🔥 KITCHEN DISPLAY (FULL CONTROL)</h1>
+    <a href="{% url 'kitchen_dashboard' %}"
+      class="bg-gray-700 px-4 py-2 rounded hover:bg-gray-600 shadow transition">Refresh Board</a>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
+    {% for order in orders %}
+    <div class="bg-white rounded-lg shadow-xl overflow-hidden border-t-8 relative
+        {% if order.status == 'RECEIVED' %}
+            
+             border-red-600
+
+
+          {% elif order.status == 'PREPARING' %}
+            
+             border-yellow-500
+
+
+          {% elif order.status == 'READY' %}
+            
+             border-green-500
+
+
+          {% elif order.status == 'SERVED' %}
+            
+             border-blue-500
+
+
+          {% endif %}">
+      <div class="p-3 bg-gray-100 flex justify-between items-center border-b">
+        <div>
+          <span class="text-2xl font-black text-gray-800 block">T-{{ order.table.table_number }}</span>
+          <span class="text-xs text-gray-500 font-bold">#{{ order.order_id }}</span>
+        </div>
+
+        <div class="text-right">
+          {% if order.status == 'RECEIVED' %}
+          <span class="bg-red-600 text-white text-xs px-2 py-1 rounded-full font-bold animate-pulse">NEW</span>
+          {% elif order.status == 'PREPARING' %}
+          <span class="bg-yellow-500 text-black text-xs px-2 py-1 rounded-full font-bold">COOKING</span>
+          {% elif order.status == 'READY' %}
+          <span class="bg-green-600 text-white text-xs px-2 py-1 rounded-full font-bold">READY</span>
+          {% elif order.status == 'SERVED' %}
+          <span class="bg-blue-600 text-white text-xs px-2 py-1 rounded-full font-bold">SERVED</span>
+          {% endif %}
+
+          <span class="block text-sm font-bold text-gray-500 mt-1">{{ order.updated_at|date:'h:i A' }}</span>
+        </div>
+      </div>
+
+      <div class="p-4 space-y-2 min-h-[150px]">
+        {% for item in order.items.all %}
+        {% if item.qty_to_cook > 0 or order.status == 'READY' or order.status == 'SERVED' %}
+        <div class="flex items-start text-lg bg-gray-50 p-2 rounded border-l-4 border-gray-300">
+          <span class="font-bold mr-3 text-gray-800 text-xl">
+            {% if order.status == 'RECEIVED' or order.status == 'PREPARING' %}
+            {{ item.qty_to_cook }}x
+            {% else %}
+            {{ item.quantity }}x
+            {% endif %}
+          </span>
+          <div class="flex flex-col w-full">
+            <span class="text-gray-900 font-bold">{{ item.food_item.name }}</span>
+            {% if item.customizations %}
+            <div class="text-xs text-gray-500 mt-1">
+              {% for addon in item.customizations %}
+              <span class="bg-gray-200 px-1 rounded mr-1">+ {{ addon }}</span>
+              {% endfor %}
+            </div>
+            {% endif %}
+            {% if item.notes %}
+            <span class="text-sm text-red-500 italic">Note: {{ item.notes }}</span>
+            {% endif %}
+          </div>
+        </div>
+        {% endif %}
+        {% endfor %}
+      </div>
+
+      <div class="p-2 bg-gray-50 border-t">
+        {% if order.status == 'RECEIVED' %}
+        <a href="{% url 'update_order_status' order.order_id 'PREPARING' %}"
+          class="block w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 text-center rounded text-lg shadow">START
+          COOKING</a>
+        <div class="text-center mt-2">
+          <a href="{% url 'update_order_status' order.order_id 'CANCELLED' %}"
+            class="text-xs text-gray-400 hover:text-red-600 underline"
+            onclick="return confirm('Cancel Order?')">Cancel</a>
+        </div>
+        {% elif order.status == 'PREPARING' %}
+        <a href="{% url 'update_order_status' order.order_id 'READY' %}"
+          class="block w-full bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-3 text-center rounded text-lg shadow">MARK
+          READY ✅</a>
+        {% elif order.status == 'READY' %}
+        <a href="{% url 'update_order_status' order.order_id 'SERVED' %}"
+          class="block w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 text-center rounded text-lg shadow">MARK
+          SERVED 🍽️</a>
+        {% elif order.status == 'SERVED' %}
+        <a href="{% url 'update_order_status' order.order_id 'PAID' %}"
+          class="block w-full bg-gray-800 hover:bg-gray-900 text-white font-bold py-3 text-center rounded text-lg shadow">COMPLETE
+          & CLOSE 💰</a>
+        {% endif %}
+      </div>
+    </div>
+    {% empty %}
+    <div class="col-span-full text-center text-gray-500 mt-20">
+      <h2 class="text-2xl font-bold">Kitchen is Clear!</h2>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<script>
+  setTimeout(function () {
+    window.location.reload(1)
+  }, 10000)
+</script>
+{% endblock %}

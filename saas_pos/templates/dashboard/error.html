@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <div class="flex flex-col items-center justify-center h-[60vh] text-center">
+    <div class="bg-red-100 p-4 rounded-full text-red-600 mb-4">
+      <i class="fas fa-exclamation-triangle text-4xl"></i>
+    </div>
+
+    <h1 class="text-3xl font-bold text-gray-800 mb-2">Oops! Something went wrong</h1>
+
+    <p class="text-gray-600 text-lg mb-6">{{ message }}</p>
+
+    <div class="space-x-4">
+      <form action="{% url 'logout' %}" method="post" class="inline">
+        {% csrf_token %}
+        <button type="submit" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-6 rounded transition">Logout</button>
+      </form>
+
+      <a href="#" class="text-orange-600 hover:underline font-semibold">Contact Super Admin</a>
+    </div>
+  </div>
+{% endblock %}
